@@ -15,9 +15,12 @@ import javax.swing.JRadioButton;
 import java.awt.Choice;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.DefaultComboBoxModel;
 import com.toedter.calendar.JCalendar;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileSystemView;
+
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -169,7 +172,17 @@ public class UsersEditForm extends JFrame {
 		textField_20.setBounds(183, 345, 168, 20);
 		panel1.add(textField_20);
 		
+		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+
 		JButton btnUpload = new JButton("upload");
+		btnUpload.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				jfc.showSaveDialog(null);
+				textField_20.setText(jfc.getCurrentDirectory().getAbsolutePath()+"\\" + jfc.getSelectedFile().getName());
+				
+			}
+		});
 		btnUpload.setBounds(382, 344, 89, 23);
 		panel1.add(btnUpload);
 		
