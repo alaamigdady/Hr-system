@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import java.awt.Font;
@@ -26,6 +27,12 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class UsersEditForm extends JFrame {
 
@@ -52,10 +59,14 @@ public class UsersEditForm extends JFrame {
 	private JTextField textField_18;
 	private JTextField textField_19;
 	private JTextField textField_20;
+	private JTextField userField;
+	private JTextField passField;
+	private JTextField typeField;
+
 
 	
 	
-	public UsersEditForm() {
+	public UsersEditForm(JFrame oldFrame) {
 		setUndecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 851, 474);
@@ -475,11 +486,58 @@ public class UsersEditForm extends JFrame {
 		btnAdd.setBounds(449, 115, 67, 23);
 		panel_2.add(btnAdd);
 		
+		JPanel account = new JPanel();
+		account.setLayout(null);
+		account.setBorder(new LineBorder(new Color(255, 255, 255)));
+		tabbedPane.addTab("Account", null, account, null);
+		
+		JLabel lblUserName = new JLabel("User Name   :");
+		lblUserName.setFont(new Font("Century Gothic", Font.PLAIN, 20));
+		lblUserName.setBounds(33, 49, 188, 26);
+		account.add(lblUserName);
+		
+		userField = new JTextField();
+		userField.setColumns(10);
+		userField.setBorder(new LineBorder(new Color(76,42,211)));
+		userField.setBounds(234, 56, 168, 20);
+		account.add(userField);
+		
+		JLabel lblPass = new JLabel("Password      :");
+		lblPass.setFont(new Font("Century Gothic", Font.PLAIN, 20));
+		lblPass.setBounds(33, 109, 188, 26);
+		account.add(lblPass);
+		
+		passField = new JTextField();
+		passField.setColumns(10);
+		passField.setBorder(new LineBorder(new Color(76,42,211)));
+		passField.setBounds(234, 116, 168, 20);
+		account.add(passField);
+		
+		JLabel lblType = new JLabel("Type          :");
+		lblType.setFont(new Font("Century Gothic", Font.PLAIN, 20));
+		lblType.setBounds(33, 169, 188, 26);
+		account.add(lblType);
+		
+		typeField = new JTextField();
+		typeField.setColumns(10);
+		typeField.setBorder(new LineBorder(new Color(76,42,211)));
+		typeField.setBounds(234, 176, 168, 20);
+		account.add(typeField);
+		
+		
 		JButton btnNewButton = new JButton("save");
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				dispose();
+				String username = userField.getText();
+				if (checkUsername(username)) {
+					writeUsername(username, passField.getText(), typeField.getText());
+					oldFrame.setVisible(true);
+					dispose();
+				}else {
+					JOptionPane.showMessageDialog(null, "this user name is used , try another one");
+				}
+				
 			}
 		});
 		btnNewButton.setBounds(653, 446, 89, 23);
@@ -496,7 +554,40 @@ public class UsersEditForm extends JFrame {
 		contentPane.add(btnCancel);
 	}
 	
-	public  void setTextfield (String s) {
-		textField.setText(s);
+	
+	
+	public boolean checkUsername(String username) {
+		try (BufferedReader read = new BufferedReader(new FileReader("../login.csv"))){	
+			String row;
+			while((row = read.readLine()) !=null) {
+				String user = row.split(",")[0];
+				if(user.equals(username)) {
+					return false;
+				}		
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return true;
+	}
+	
+	public void writeUsername(String username , String password , String type) {
+		try(BufferedWriter write = new BufferedWriter(  new FileWriter("../login.csv", true))){
+			write.append(username+",");
+			write.append(password+",");
+			write.append(type);
+			write.append("\n");
+
+			write.flush();
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }

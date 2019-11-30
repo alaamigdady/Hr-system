@@ -18,6 +18,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.JRadioButton;
@@ -28,14 +32,6 @@ import javax.swing.border.MatteBorder;
 import java.awt.SystemColor;
 
 public class Login extends JFrame {
-	private Image img_logo = new ImageIcon(Login.class.getResource("icon/interim-hr-experts-icon.png")).getImage()
-			.getScaledInstance(300, 300, Image.SCALE_SMOOTH);
-	private Image img_username = new ImageIcon(Login.class.getResource("icon/username.png")).getImage()
-			.getScaledInstance(60, 60, Image.SCALE_SMOOTH);
-	private Image img_password = new ImageIcon(Login.class.getResource("icon/lock.png")).getImage()
-			.getScaledInstance(50, 50, Image.SCALE_SMOOTH);
-	private Image img_login = new ImageIcon(Login.class.getResource("icon/Key-icon.png")).getImage()
-			.getScaledInstance(90, 90, Image.SCALE_SMOOTH);
 
 	private JPanel contentPane;
 	private JTextField textUserName;
@@ -115,6 +111,8 @@ public class Login extends JFrame {
 		lblUsername.setHorizontalAlignment(SwingConstants.CENTER);
 		lblUsername.setBounds(264, 0, 36, 47);
 		panel.add(lblUsername);
+		Image img_username = new ImageIcon(Login.class.getResource("icon/username.png")).getImage()
+				.getScaledInstance(lblUsername.getWidth(), lblUsername.getHeight(), Image.SCALE_SMOOTH);
 		lblUsername.setIcon(new ImageIcon(img_username));
 		
 		
@@ -161,33 +159,37 @@ public class Login extends JFrame {
 		JLabel lblpassword = new JLabel("");
 		lblpassword.setBounds(258, 0, 42, 47);
 		panelPassword.add(lblpassword);
+	    Image img_password = new ImageIcon(Login.class.getResource("icon/lock.png")).getImage()
+				.getScaledInstance(lblpassword.getWidth(), lblpassword.getHeight(), Image.SCALE_SMOOTH);
 		lblpassword.setIcon(new ImageIcon(img_password));
 		
 		
 		panel_2 = new JPanel();
-		//String password = "1234";
 		panel_2.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(textUserName.getText().equals("") || txtPassword.getText().equals("") || textUserName.getText().equals("Username" )|| txtPassword.getText().equals("Password")) {
 					JOptionPane.showMessageDialog(null, "Please Fill all fields ");
-				}else if (!txtPassword.getText().equals("1234")) {
-					JOptionPane.showMessageDialog(null, "Wrong password ");
-
 				}else  {
 				String type =(String) comboBox.getSelectedItem();
-				if(type.equals("admin")) {
-					MainFrame main = new MainFrame();
+				String user = textUserName.getText();
+				String pass = txtPassword.getText();
+				if (checkEntries(user,pass,type)) {
+					if(type.equals("admin")) {
+					MainFrame main = new MainFrame(frame);
 					main.setVisible(true);
 					main.setLocationRelativeTo(null);
 					frame.setVisible(false);
-				}else if(type.equals("employee")) {
+					}else if(type.equals("employee")) {
 					EmployeeFrame emp = new EmployeeFrame();
 					emp.setVisible(true);
 					emp.setLocationRelativeTo(null);
 					frame.setVisible(false);
+					}
+				}else {
+					JOptionPane.showMessageDialog(null, "Wrong information ");
 				}
-				}
+			}
 				
 			}
 		});
@@ -205,6 +207,8 @@ public class Login extends JFrame {
 		JLabel lbllogin = new JLabel("");
 		lbllogin.setBounds(225, 0, 75, 47);
 		panel_2.add(lbllogin);
+	    Image img_login = new ImageIcon(Login.class.getResource("icon/Key-icon.png")).getImage()
+				.getScaledInstance(lbllogin.getWidth(), lbllogin.getHeight(), Image.SCALE_SMOOTH);
 		lbllogin.setIcon(new ImageIcon(img_login));
 		
 		
@@ -244,7 +248,30 @@ public class Login extends JFrame {
 		lblLogo.setBounds(50, 11, 300, 239);
 		contentPane.add(lblLogo);
 		setLocationRelativeTo(null);
+		Image img_logo = new ImageIcon(Login.class.getResource("icon/interim-hr-experts-icon.png")).getImage()
+				.getScaledInstance(lblLogo.getWidth(), lblLogo.getHeight(), Image.SCALE_SMOOTH);
 		lblLogo.setIcon(new ImageIcon(img_logo));
 		
+	}
+	
+	public boolean checkEntries(String user, String pass , String type) {
+		try (BufferedReader read = new BufferedReader(new FileReader("../login.csv"))){	
+			String row;
+			while((row = read.readLine()) !=null) {
+				String username = row.split(",")[0];
+				String password = row.split(",")[1];
+				String t = row.split(",")[2];
+				if(user.equals(username) && pass.equals(password)&& type.equals(type)) {
+					return true;
+				}		
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+		return false;
 	}
 }

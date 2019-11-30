@@ -158,29 +158,11 @@ public class MainFrame extends JFrame {
 	private JLabel label_17;
 	private JLabel label_18;
 	private JLabel label_19;
-	/**
-	 * Launch the application.
-	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					 frame = new MainFrame();
-//					frame.setVisible(true);
-//					frame.setLocationRelativeTo(null);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
-	/**
-	 * Create the frame.
-	 */
-	public MainFrame() {
-		//setVisible(true);
-		//setLocationRelativeTo(null);
+	private JFrame oldFrame;
+	
+	public MainFrame(JFrame oldFrame) {
+		frame = this;
+		this.oldFrame=oldFrame;
 		this.setUndecorated(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -354,8 +336,9 @@ public class MainFrame extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (JOptionPane.showConfirmDialog(null, "Are you Suse to Logout", "Confirmation",JOptionPane.YES_NO_OPTION)==0) {
-					Login login = new Login();
-					login.setVisible(true);
+//					Login login = new Login();
+//					login.setVisible(true);
+					oldFrame.setVisible(true);
 					dispose();
 					//System.exit(0);	
 				}
@@ -973,10 +956,11 @@ public class MainFrame extends JFrame {
 		lblAddUser.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				UsersEditForm window = new UsersEditForm();
+				UsersEditForm window = new UsersEditForm(frame);
 				window.setVisible(true);
 				window.setLocationRelativeTo(null);
-				setState(Frame.ICONIFIED);
+				frame.setVisible(false);
+				//setState(Frame.ICONIFIED);
 			}
 		});
 		lblNewLabel.addMouseListener(new MouseAdapter() {
@@ -1000,12 +984,11 @@ public class MainFrame extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				
 				
-			    //String id1 = (String)table.getValueAt(1, 2);
-				UsersEditForm window = new UsersEditForm();
-				//window.setTextfield(id1);
+				UsersEditForm window = new UsersEditForm(frame);
 				window.setVisible(true);
 				window.setLocationRelativeTo(null);
-				setState(Frame.ICONIFIED);
+				frame.setVisible(false);
+				//setState(Frame.ICONIFIED);
 			}
 		});
 		lblNewLabel.addMouseListener(new MouseAdapter() {
@@ -1039,11 +1022,6 @@ public class MainFrame extends JFrame {
 		lblDelete.setBounds(407, 558, 89, 31);
 		panelEmployees.add(lblDelete);
 		
-		//create table 
-		
-		
-		//JScrollPane sp = new JScrollPane();
-				
 
 		panelNotification = new JPanel();
 		layeredPane.add(panelNotification, "name_1927307671627100");
@@ -1553,21 +1531,14 @@ public class MainFrame extends JFrame {
 		panelWarnings.add(textField_11);
 	}
 
-	//JLabel preveious;
 	
 	public void displayPanel(JPanel panel,JLabel label) {
-//		if(preveious !=null) {
-//			preveious.setBackground(new Color(76,42,211));
-//			preveious.setForeground(Color.white);
-//		}
+
 		layeredPane.removeAll();
 		layeredPane.add(panel);
 		layeredPane.repaint();
 		layeredPane.revalidate();
-//		label.setBackground(Color.white);
-//		label.setForeground(new Color(76,42,211));
-//		preveious = label;
-		
+
 		
 		
 	}
